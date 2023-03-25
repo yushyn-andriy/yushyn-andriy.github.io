@@ -1,30 +1,144 @@
 <html>  
-    <head>
-        <meta charset="utf-8"/>
-        <script src="wasm_exec.js"></script>
-        <script>
-            const go = new Go();
-            WebAssembly.instantiateStreaming(fetch("json.wasm"), go.importObject).then((result) => {
-                go.run(result.instance);
-            });
-        </script>
-    </head>
-    <body>
-         <textarea id="jsoninput" name="jsoninput" cols="80" rows="30"></textarea>
-         <input id="button" type="submit" name="button" value="evaluate" onclick="json(jsoninput.value)"/>
-         <textarea id="jsonoutput" name="jsonoutput" cols="80" rows="30"></textarea>
+<head>
+  <meta charset="utf-8"/>
+  <style type="text/css" media="screen">
+    #editor { 
+    position: relative;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    }
+    .body {
+        background-color: #253443;
+    }
+    .header {
+      background-color: #007D91;
+    }
+    .header-info {
+      color: white;
+      font-size: x-large;
+    }
+    .evaluate-bar {
+      background-color: #253443;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+    #evaluate_btn {
+      padding-left: 35px;
+      padding-right: 35px;
+      background-color: #50b7e0;
+      font: bold 0.875rem Roboto, sans-serif;
+      color: black;
+    }
+    #evaluate_btn:hover {
+      background-color: green;
+    }
+    #clear_btn {
+      padding-left: 35px;
+      padding-right: 35px;
+      background-color: #50b7e0;
+      font: bold 0.875rem Roboto, sans-serif;
+      color: black;
+    }
+    #clear_btn:hover {
+      background-color: green;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+  <nav class="navbar navbar-expand-lg header">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarExample01">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <p class="text-center font-weight-bold header-info">Welcome to the FireFly Playground, 
+        an experimental programming language created by Andriy Yushyn.
+        For any inquiries or questions, please contact me at baybaraandrey@gmail.com</p>
+        <p class="text-center header-info">
+          </p>
+        </ul>
+      </div>
+    </div>
+  </nav>
+    <body class="body">
+        <div class="container-fluid">
+          <div class="row evaluate-bar">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+              <button id="evaluate_btn"  class="btn btn-outline-success btn-sm btn-cls" type="button">run</button>
+              <button id="clear_btn"  class="btn btn-outline-success btn-sm btn-cls" type="button">clear</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div id="editor"></div>
+            </div>
+            <div class="col-md-4">
+              <textarea id="output" name="output" cols="80" rows="20"></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+            <div class="col-md-12">
+              <p style="color: white;">I have created an interpreter for the FireFly programming language that is embedded into 
+              a browser using WebAssembly (WASM) technology. 
+              FireFly is a new interpreted programming language that takes inspiration from Python. While creating the interpreter, 
+              I primarily relied on the guidance of books and tutorials such as "Write an Interpreter in Go" and "Write a Compiler in Go" 
+              by Thorsten Ball and "Principles of Compiler Design" by A. Aho and J. Ullman. However, I also implemented a lot completely 
+              new features, including a classes, data model similar to Python's etc... 
+              There is still a lot of work to do in order to improve and add more features 
+              to the language, but I am doing it purely for the enjoyment of the process.</p>
+            </div>
+          </div>
+         </div>
     </body>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    
+    <script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="src-noconflict/theme-terminal.js" type="text/javascript" charset="utf-8"></script>
+    <script src="wasm_exec.js"></script>
     <script>
-        var json = function(input) {
-            jsonoutput.value = evaluate(input)
-        }
-        jsoninput.value = `
-# example of using class
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("compiler.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+    </script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/terminal");
+        editor.setOptions({
+            autoScrollEditorIntoView: true,
+            copyWithEmptySelection: true,
+            mode: "ace/mode/javascript",
+            useWorker: false,
+        });
+        editor.resize()
+
+
+        output = document.getElementById("output");
+        document.getElementById("evaluate_btn").addEventListener("click", function(event) {
+            output.value = evaluate(editor.getValue())
+        });
+        document.getElementById("clear_btn").addEventListener("click", function(event) {
+            editor.session.setValue("");
+            output.value = "";
+        });
+document.getElementById('editor').style.fontSize='16px';
+    const example1 = `# // creating new class
+
 class HelloWorld {
+    
+  # // defining initialize method(called when instance of class created)
   fn __init__(name) {
      self.name = name;
   };
-
+    
+  # // defining ordinary functions
   fn setName(new_name) {
     self.name = new_name;
   };
@@ -32,27 +146,63 @@ class HelloWorld {
 };
 
 
+# // Ordinary function in FireFly
 fn setName(obj, new_name) {
  obj.name = new_name;
 }
 
+# // Creating instance of class HelloWorld
 hw = HelloWorld("FireFly")
-for (i = 0; i<10; i = i+1) {
-  println(i, hw.greeting());
+
+# // ForLoop in FireFly
+for (i = 0; i<2; i = i+1) {
+  println(hw.greeting());
 }
 
-println();
+# // calling ordinary function
 setName(hw, "Norway");
-for (i = 0; i<10; i = i+1) {
-  println(i, hw.greeting());
+for (i = 0; i<2; i = i+1) {
+  println(hw.greeting());
 }
 
-println();
+# // calling object method
 hw.setName("Andrew");
-for (i = 0; i<10; i = i+1) {
-  println(i, hw.greeting());
+for (i = 0; i<2; i = i+1) {
+  println(hw.greeting());
 }
 
-`
+# // print local objects
+println("locals()=", locals());
+println("");
+
+
+# // print builtins
+println("builtins()=", builtins());
+println("");
+
+# // strings
+s = "New string";
+println("len(s)=", len(s));
+println(s + "another string");
+
+# // lists in FyreFly
+list = [1, 2, "string", hw];
+
+println("list[3] =", list[3].name);
+println("len(list)=", len(list));
+println("");
+
+
+# // dicts in FireFly
+dict = {
+    "key1": list[3].name,
+    "key2": "string",
+    3: 773,
+};
+
+
+println("dict['key2']=", dict["key2"]);
+println("dict[3]=", dict[3]);`
+      editor.session.setValue(example1);
      </script>
 </html>  
