@@ -16,7 +16,40 @@
     </body>
     <script>
         var json = function(input) {
-            jsonoutput.value = formatJSON(input)
+            jsonoutput.value = evaluate(input)
         }
+        jsoninput.value = `
+class HelloWorld {
+  fn __init__(name) {
+     self.name = name;
+  };
+
+  fn setName(new_name) {
+    self.name = new_name;
+  };
+  fn greeting() { return "Hei, " + self.name + " !!!"};
+};
+
+
+fn setName(obj, new_name) {
+ obj.name = new_name;
+}
+
+hw = HelloWorld("FireFly")
+for (i = 0; i<10; i = i+1) {
+  println(hw.greeting());
+}
+
+setName(hw, "Norway");
+for (i = 0; i<10; i = i+1) {
+  println(hw.greeting());
+}
+
+hw.setName("Andrew");
+for (i = 0; i<10; i = i+1) {
+  println(hw.greeting());
+}
+
+`
      </script>
 </html>  
