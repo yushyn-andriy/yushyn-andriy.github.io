@@ -26,6 +26,31 @@ document.getElementById("clear_btn").addEventListener("click", function(event) {
 document.getElementById('editor').style.fontSize='16px';
 
 
+document.getElementById("hello-world-tab").addEventListener("click", function(event) {
+    editor.session.setValue(listing_hello_world);
+    output.value = "";
+});
+
+document.getElementById("hello-world-tab").addEventListener("click", function(event) {
+    editor.session.setValue(listing_1_hello_world);
+    output.value = "";
+});
+document.getElementById("functions").addEventListener("click", function(event) {
+    editor.session.setValue(listing_2_functions);
+    output.value = "";
+});
+document.getElementById("variables").addEventListener("click", function(event) {
+    editor.session.setValue(listing_3_variables);
+    output.value = "";
+});
+document.getElementById("for_loop").addEventListener("click", function(event) {
+    editor.session.setValue(listing_4_for);
+    output.value = "";
+});
+
+
+
+
 const example1 = `# // creating new class
 
 class HelloWorld {
@@ -100,6 +125,11 @@ dict = {
 
 println("dict['key2']=", dict["key2"]);
 println("dict[3]=", dict[3]);
+
+dict[3] = -3.14;
+println("dict[3]=", dict[3]);
+
+println();
 
 PI = 3.1410 + 0.0005;
 println("PI:", PI);`
