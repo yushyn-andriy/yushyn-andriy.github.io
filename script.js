@@ -1,29 +1,104 @@
-// Wait for the document to load before running the script 
-(function ($) {
-  
-  // We use some Javascript and the URL #fragment to hide/show different parts of the page
-  // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#Linking_to_an_element_on_the_same_page
-  $(window).on('load hashchange', function(){
-    
-    // First hide all content regions, then show the content-region specified in the URL hash 
-    // (or if no hash URL is found, default to first menu item)
-    $('.content-region').hide();
-    
-    // Remove any active classes on the main-menu
-    $('.main-menu a').removeClass('active');
-    var region = location.hash.toString() || $('.main-menu a:first').attr('href');
-    
-    // Now show the region specified in the URL hash
-    $(region).show();
-    
-    // Highlight the menu link associated with this region by adding the .active CSS class
-    $('.main-menu a[href="'+ region +'"]').addClass('active'); 
+const go = new Go();
+WebAssembly.instantiateStreaming(fetch("compiler.wasm"), go.importObject).then((result) => {
+    go.run(result.instance);
+});
 
-    // Alternate method: Use AJAX to load the contents of an external file into a div based on URL fragment
-    // This will extract the region name from URL hash, and then load [region].html into the main #content div
-    // var region = location.hash.toString() || '#first';
-    // $('#content').load(region.slice(1) + '.html')
-    
-  });
-  
-})(jQuery);
+
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/terminal");
+editor.setOptions({
+    autoScrollEditorIntoView: true,
+    copyWithEmptySelection: true,
+    mode: "ace/mode/javascript",
+    useWorker: false,
+});
+editor.resize()
+
+
+output = document.getElementById("output");
+document.getElementById("evaluate_btn").addEventListener("click", function(event) {
+    output.value = evaluate(editor.getValue())
+});
+document.getElementById("clear_btn").addEventListener("click", function(event) {
+    editor.session.setValue("");
+    output.value = "";
+});
+document.getElementById('editor').style.fontSize='16px';
+
+
+const example1 = `# // creating new class
+
+class HelloWorld {
+
+# // defining initialize method(called when instance of class created)
+fn __init__(name) {
+self.name = name;
+};
+
+# // defining ordinary functions
+fn setName(new_name) {
+self.name = new_name;
+};
+fn greeting() { return "Hei, " + self.name + " !!!"};
+};
+
+
+# // Ordinary function in FireFly
+fn setName(obj, new_name) {
+obj.name = new_name;
+}
+
+# // Creating instance of class HelloWorld
+hw = HelloWorld("FireFly")
+
+# // ForLoop in FireFly
+for (i = 0; i<2; i = i+1) {
+println(hw.greeting());
+}
+
+# // calling ordinary function
+setName(hw, "Norway");
+for (i = 0; i<2; i = i+1) {
+println(hw.greeting());
+}
+
+# // calling object method
+hw.setName("Andrew");
+for (i = 0; i<2; i = i+1) {
+println(hw.greeting());
+}
+
+# // print local objects
+println("locals()=", locals());
+println("");
+
+
+# // print builtins
+println("builtins()=", builtins());
+println("");
+
+# // strings
+s = "New string";
+println("len(s)=", len(s));
+println(s + "another string");
+
+# // lists in FyreFly
+list = [1, 2, "string", hw];
+
+println("list[3] =", list[3].name);
+println("len(list)=", len(list));
+println("");
+
+
+# // dicts in FireFly
+dict = {
+"key1": list[3].name,
+"key2": "string",
+3: 773,
+};
+
+
+println("dict['key2']=", dict["key2"]);
+println("dict[3]=", dict[3]);`
+
+editor.session.setValue(example1);
