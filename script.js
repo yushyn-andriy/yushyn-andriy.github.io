@@ -99,6 +99,9 @@ dict = {
 
 
 println("dict['key2']=", dict["key2"]);
-println("dict[3]=", dict[3]);`
+println("dict[3]=", dict[3]);
+
+PI = 3.1410 + 0.0005;
+println("PI:", PI);`
 
 editor.session.setValue(example1);
