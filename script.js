@@ -26,10 +26,6 @@ document.getElementById("clear_btn").addEventListener("click", function(event) {
 document.getElementById('editor').style.fontSize='16px';
 
 
-document.getElementById("hello-world-tab").addEventListener("click", function(event) {
-    editor.session.setValue(listing_hello_world);
-    output.value = "";
-});
 
 document.getElementById("hello-world-tab").addEventListener("click", function(event) {
     editor.session.setValue(listing_1_hello_world);
