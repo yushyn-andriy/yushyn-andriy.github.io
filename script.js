@@ -30,22 +30,22 @@ const example1 = `# // creating new class
 
 class HelloWorld {
 
-# // defining initialize method(called when instance of class created)
-fn __init__(name) {
-self.name = name;
-};
+    # // defining initialize method(called when instance of class created)
+    fn __init__(name) {
+        self.name = name;
+    };
 
-# // defining ordinary functions
-fn setName(new_name) {
-self.name = new_name;
-};
-fn greeting() { return "Hei, " + self.name + " !!!"};
+    # // defining ordinary functions
+    fn setName(new_name) {
+        self.name = new_name;
+    };
+    fn greeting() { return "Hei, " + self.name + " !!!"};
 };
 
 
 # // Ordinary function in FireFly
 fn setName(obj, new_name) {
-obj.name = new_name;
+    obj.name = new_name;
 }
 
 # // Creating instance of class HelloWorld
@@ -53,19 +53,19 @@ hw = HelloWorld("FireFly")
 
 # // ForLoop in FireFly
 for (i = 0; i<2; i = i+1) {
-println(hw.greeting());
+    println(hw.greeting());
 }
 
 # // calling ordinary function
 setName(hw, "Norway");
 for (i = 0; i<2; i = i+1) {
-println(hw.greeting());
+    println(hw.greeting());
 }
 
 # // calling object method
 hw.setName("Andrew");
 for (i = 0; i<2; i = i+1) {
-println(hw.greeting());
+    println(hw.greeting());
 }
 
 # // print local objects
@@ -92,9 +92,9 @@ println("");
 
 # // dicts in FireFly
 dict = {
-"key1": list[3].name,
-"key2": "string",
-3: 773,
+    "key1": list[3].name,
+    "key2": "string",
+    3: 773,
 };
 
 
